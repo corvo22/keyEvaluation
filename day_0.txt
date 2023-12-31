@@ -1,0 +1,50 @@
+Since I started at Drexel, I have been interested in the overlap between music and computer science blaghg introduction.
+
+Lately, when playing bass and looking at the keys given for a specific song by sites like https://tunebat.com/ and https://tabs.ultimate-guitar.com/ 
+I kept seeing that the keys given do not line up with what I hear or that the keys given are not consistent across versions.
+
+ok so (finally) I found a large database that is fairly varried in key and 1. doesnt cost me monies and 2. I dont have to download individually each piece and map the key to the midi file in some complex table thing. bad part. its in .abc files which is an oldish way of noting music as ascii 
+luckily i found a c program that converts it to midi. however..... the stuff ive done so far works with oog/mp3/flac/wav etc so now ive gotta either convert the midi to (prolly) flac or use https://craffel.github.io/pretty-midi/ instead which is fine? i guess?? but like. idk librose has more features for visualisation if id like
+but omg so many broken fucking links
+anyways
+now ima go make a script to automate the transformation for me
+
+...
+
+Database was not large and varried enough. Need more data for missing keys:
+
+C : 	54
+Am : 	37
+G : 	348
+Em : 	28
+D : 	353
+Bm : 	3
+A : 	119
+F#m : 	0
+E : 	2
+C#m : 	0
+B : 	1
+G#m : 	0
+F# : 	0
+D#m : 	0
+C# : 	0
+A#m : 	0
+F : 	24
+Dm :	14	
+Bb :	12
+Gm :	11
+Eb :	0
+Cm :	0
+Ab :	0
+Fm :	0
+Db :	0
+Bbm :	0
+Gb :	0
+Ebm :	0
+Cb :	0
+Abm :	0
+
+So. New plan. Let's look at the top 15 songs in each non-theoretical key (for non music nerds, that means keys that are realistically played).
+Get mp3s for each, then slice them into 30 second blocks and remove percussive features, normalise, and filter, then use
+
+Now for how I am gonna get these as mp3s (or oog, or flac, or wav)...
