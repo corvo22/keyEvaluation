@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from LDA import LDA
 
+
 def processMidiData(dir):
     num_files = len(os.listdir(dir))
     feature_matrix = np.zeros((0,13))
@@ -65,13 +66,13 @@ def processMp3Data(dir):
 
 def knn(train_set, train_set_labels, validation_set, validation_set_labels, k):
 
+    num_features = train_set.shape[1]
+    
     train_set = np.append(train_set, np.reshape(train_set_labels, (-1,1)), axis=1)
     validation_set = np.append(validation_set, np.reshape(validation_set_labels, (-1,1)), axis=1)
     t = 0
     c = 0
-
-    print(train_set.shape)
-
+    
     confusion_matrix = np.zeros((24,24))
 
     # calc distance between val point and each. classify based on majority opinion of k closest
@@ -83,7 +84,7 @@ def knn(train_set, train_set_labels, validation_set, validation_set_labels, k):
         
             # euclidian dist: sqrt(sum( (v_i - t_i)^2 ))
             dist = 0
-            for i in range(3):
+            for i in range(num_features):
                 v_i = v_entry[i]
                 t_i = t_entry[i]
                 dist = dist + (v_i - t_i) ** 2
@@ -94,24 +95,22 @@ def knn(train_set, train_set_labels, validation_set, validation_set_labels, k):
         dist_list.sort(key=lambda x: x[0])
 
         for i in range(k):
-            opinions.append(dist_list[i][1][3])
-
-        #print(opinions, " : ", v_entry[3])
-        #print("Predict : ", max(set(opinions), key=opinions.count), " Actual : ", v_entry[3])
+            opinions.append(dist_list[i][1][num_features])
         
-        confusion_matrix[int(max(set(opinions), key=opinions.count)), int(v_entry[3])] = confusion_matrix[int(max(set(opinions), key=opinions.count)), int(v_entry[3])] + 1
+        confusion_matrix[int(max(set(opinions), key=opinions.count)), int(v_entry[num_features])] = confusion_matrix[int(max(set(opinions), key=opinions.count)), int(v_entry[num_features])] + 1
 
-        if max(set(opinions), key=opinions.count) == v_entry[3]:
+        if max(set(opinions), key=opinions.count) == v_entry[num_features]:
             c = c + 1
         t = t + 1
 
     print("***** ACCURACY *****")
     print(c, "/", t)
+    
     for l in confusion_matrix:
         for item in l:
             print(item,end=',')
         print('\n')
-
+    
     
 def graph(train_proj, train_set_labels):
     colours = ['black', 'red', 'blue', 'green', 'purple', 'gold']
@@ -139,6 +138,7 @@ def main():
     parser.add_argument("-knn") 
     args = parser.parse_args()
 
+    np.random.seed(1)
     
     if args.mode:
         if args.mode == "midi":
@@ -160,20 +160,19 @@ def main():
         total_labels = total[:,total.shape[1]-1]
         total = np.delete(total, total.shape[1]-1,1)
 
-        lda = LDA(3)
+        lda = LDA(23)
         lda.fit(total, total_labels)
         total = lda.transform(total) * 1000
         
-        graph(total, total_labels)
-
+        #graph(total, total_labels)
 
         total = np.append(total, np.reshape(total_labels, (-1,1)), axis=1)
 
         np.random.shuffle(total);
 
-        train_set = total[:(np.shape(total)[0] // 5) * 4][:]
 
-        validation_set = total[(np.shape(total)[0] // 5) * 4:][:]
+        train_set = total[:(np.shape(total)[0] // 4) * 3][:]
+        validation_set = total[(np.shape(total)[0] // 4) * 3:][:]
 
         train_set_labels = train_set[:,train_set.shape[1]-1]
         train_set = np.delete(train_set, train_set.shape[1] - 1, 1)
@@ -181,8 +180,8 @@ def main():
         validation_set_labels = validation_set[:,validation_set.shape[1]-1]
         validation_set = np.delete(validation_set, validation_set.shape[1] - 1, 1)
 
-        
         knn(train_set, train_set_labels, validation_set, validation_set_labels, 5)
+           
         
 
 main()
